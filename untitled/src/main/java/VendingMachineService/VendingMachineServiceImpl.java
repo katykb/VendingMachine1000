@@ -97,8 +97,8 @@ public class VendingMachineServiceImpl implements VendingMachineServiceIF {
 
     @Override
     public BigDecimal getMoneyFromUser(){
-        BigDecimal bigDecimal = view.promptUserMoneyInput();
-        return bigDecimal;
+        BigDecimal moneyInput = view.promptUserMoneyInput();
+        return moneyInput;
     }
 }
 

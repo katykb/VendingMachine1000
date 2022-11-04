@@ -21,13 +21,13 @@ public class VendingMachineDaoImpl implements VendingMachineDaoIF {
 
     @Override
     public Item addItemAsOwner(String itemId, Item item) {
-        Item itemAdded= mapOfLoadedItems.put(itemId, item);
+        Item itemAdded = mapOfLoadedItems.put(itemId, item);
         return itemAdded;
     }
 
     @Override
     public List<Item> getAllItems() {
-       return new ArrayList<Item>(mapOfLoadedItems.values());
+        return new ArrayList<Item>(mapOfLoadedItems.values());
     }
 
     @Override
@@ -54,22 +54,22 @@ public class VendingMachineDaoImpl implements VendingMachineDaoIF {
     @Override
     public Map<String, Item> loadItemsFromFile() throws VendingMachinePersistenceException {
         Scanner scanner;
-        try{
+        try {
             scanner = new Scanner(
                     new BufferedReader(new FileReader(ITEMS_FILE)));
-        } catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             throw new VendingMachinePersistenceException("Could not load items in file", e);
         }
         String currentLine;
-        Item currentItem = null;
-        while (scanner.hasNextLine()){
+        while (scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
             String[] splitInfo = currentLine.split(DELIMITER);
-            String itemName = splitInfo[0];
-            BigDecimal itemPrice = new BigDecimal(splitInfo[1]);
-            int itemsInStock = Integer.parseInt(splitInfo[2]);
-            Item itemToAdd = new Item(itemName, itemPrice, itemsInStock);
-            mapOfLoadedItems.put(currentItem.getItemId(), currentItem);
+            String itemId = splitInfo[0];
+            String itemName = splitInfo[1];
+            BigDecimal itemPrice = new BigDecimal(splitInfo[2]);
+            int itemsInStock = Integer.parseInt(splitInfo[3]);
+            Item itemToAdd = new Item(itemId, itemName, itemPrice, itemsInStock);
+            mapOfLoadedItems.put(itemToAdd.getItemId(), itemToAdd);
         }
         scanner.close();
         return mapOfLoadedItems;
@@ -78,19 +78,19 @@ public class VendingMachineDaoImpl implements VendingMachineDaoIF {
     @Override//Marshaling - writing data to the file
     public void writeItemsToFile() throws VendingMachinePersistenceException {
         PrintWriter out;
-        try{
+        try {
             out = new PrintWriter(new FileWriter(ITEMS_FILE));
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new VendingMachinePersistenceException(e.getMessage());
         }
-        for(Item currentItem : mapOfLoadedItems.values()) {
+        for (Item currentItem : mapOfLoadedItems.values()) {
             mapOfLoadedItems.get(currentItem);
         }
         String itemAsText;
         List<Item> itemList = this.getAllItems();
-        for(Item currentItem : mapOfLoadedItems.values()){
+        for (Item currentItem : mapOfLoadedItems.values()) {
 
-        out.println(currentItem);
+            out.println(currentItem);
         }
         //private String marshalItemsAsText(Item aItem){
         //get past try cant, outputFileWriting2 is our actual file

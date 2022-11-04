@@ -24,7 +24,7 @@ public class VendingMachineView {
         io.print("=================================");
         io.print("1. View and Buy an Item");
         io.print("2. Add Money");
-        io.print("Exit Machine");
+        io.print("3. Exit Machine");
 
         return io.readInt("Please select from the menu", 1, 3);
     }

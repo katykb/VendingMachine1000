@@ -32,7 +32,6 @@ public class VendingMachineController {
 
     public void run() throws VendingMachinePersistenceException {
         BigDecimal moneyDeposited = new BigDecimal("0");
-        //String chosenItem = null;
         boolean keepGoing = true;
         int menuSelection = 0;
         Scanner scanner = new Scanner(System.in);
@@ -48,9 +47,8 @@ public class VendingMachineController {
                         break;
 
                     case 2:
-                        BigDecimal userMoneyInput;
-                        userMoneyInput = service.getMoneyFromUser();
-                        break;
+                      moneyDeposited= service.getMoneyFromUser();
+                      break;
 
                     case 3:
                         keepGoing = false;
@@ -65,7 +63,7 @@ public class VendingMachineController {
     }
 
 
-    String getChosenItem(String itemId) {
+    public String getChosenItem(String itemId) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             view.promptUserItemChoice();
@@ -79,7 +77,7 @@ public class VendingMachineController {
         }
     }
 
-    boolean didUserPutSufficientFundsIn(BigDecimal userAmount, Item item) {
+   public boolean didUserPutSufficientFundsIn(BigDecimal userAmount, Item item) {
         try {
             service.checkSufficientMoneyToBuyItem(userAmount, String.valueOf(item));
             return true;
@@ -90,7 +88,7 @@ public class VendingMachineController {
         }
     }
 
-    void displayChangeReturnedToUser(BigDecimal amount, Item item) {
+    public void displayChangeReturnedToUser(BigDecimal amount, Item item) {
         BigDecimal change = service.calculateChange(amount, item);
         view.displayChangeReturnedToCustomer(change, String.valueOf(item));
     }
@@ -107,7 +105,7 @@ public class VendingMachineController {
 //            view.displayErrorMessage(message);
 //        }
 
-    void updateSoldItem(Item item) throws VendingMachinePersistenceException {
+    public void updateSoldItem(Item item) throws VendingMachinePersistenceException {
         try {
             service.updateItemSale(String.valueOf(item));
         } catch (VendingMachineNoItemInventoryException ex) {

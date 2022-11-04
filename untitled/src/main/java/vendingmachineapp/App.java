@@ -15,7 +15,6 @@ import VendingMachineService.VendingMachineServiceImpl;
 public class App {
     public static void main(String[] args) throws VendingMachinePersistenceException {
         UserInputOutputIF myIo = new UserInputOutputImpl();
-        //myIo.print("testing this mess");
         VendingMachineView myView = new VendingMachineView(myIo);
         VendingMachineDaoIF myDao = new VendingMachineDaoImpl(myIo);
         VendingMachineAuditDaoImpl myAuditDao = new VendingMachineAuditDaoImpl();
