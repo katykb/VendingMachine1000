@@ -5,10 +5,10 @@ import java.util.Objects;
 
 public class Item {
 
-    private String itemId;
-    private String itemName;
-    private BigDecimal itemPrice;
-    private int itemsInStock;
+   public String itemId;
+    public String itemName;
+    public BigDecimal itemPrice;
+    public int itemsInStock;
 
     public Item(String itemId, String itemName, BigDecimal itemPrice, int itemsInStock){
         this.itemId = itemId;
@@ -17,8 +17,8 @@ public class Item {
         this.itemsInStock = itemsInStock;
     }
 
-    public Item(String itemName, BigDecimal itemPrice, int itemsInStock) {
-    }
+//    public Item(String itemName, BigDecimal itemPrice, int itemsInStock) {
+//    }
 
 
     public String getItemId() {

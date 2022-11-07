@@ -5,6 +5,7 @@ import VendingMachionDto.Item;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Scanner;
 
 public class VendingMachineView {
 
@@ -22,11 +23,19 @@ public class VendingMachineView {
     public int displayMainMenuAndGetSelection() {
         io.print("Vending Machine1000 Main Menu");
         io.print("=================================");
-        io.print("1. View and Buy an Item");
-        io.print("2. Add Money");
+        io.print("1. Add Money");
+        io.print("2. View and Buy an Item");
         io.print("3. Exit Machine");
 
         return io.readInt("Please select from the menu", 1, 3);
+    }
+
+    public BigDecimal promptUserMoneyInput() {
+      return io.readBigDecimal("How much money do you want to deposit?");
+//        BigDecimal userMoney;
+//        userMoney = new BigDecimal(String.valueOf(moneyDeposited));
+//        return userMoney;
+//        BigDecimal moneyDeposited
     }
 
     public void displayItemList(List<Item> itemList) {
@@ -35,6 +44,7 @@ public class VendingMachineView {
                     currentItem.getItemId(),
                     currentItem.getItemName(),
                     currentItem.getItemPrice());
+
             io.print(itemInfo);
         }
         io.readString("Please hit enter to continue");
@@ -42,28 +52,36 @@ public class VendingMachineView {
     }
 
 
-    public BigDecimal promptUserMoneyInput() {
-        String moneyDeposited = io.readString("How much money do you want to deposit?");
-        BigDecimal userMoney;
-        userMoney = new BigDecimal(moneyDeposited);
-        return userMoney;
-    }
 
     public void displayUserMoneyInput(BigDecimal moneyDeposited) {
         io.print("You have deposited: " + moneyDeposited);
+
     }
 
-    public void promptUserItemChoice() {
+    public int promptUserItemChoice() {
 
         io.print("Please enter a selection from the item menu. Please enter a number.");
-    }
+        Scanner scanner = new Scanner(System.in);
+        String itemId = "";
 
-    public void displayUserChoiceOfItem(String item) {
-        io.print("You have selected: " + item);
+        while (true){
+            itemId = scanner.nextLine();
+            try {
+                int choice = Integer.parseInt(itemId);
+                return choice;
+            }catch (NumberFormatException e){
+
+            }
+
+                   }
+
+//    public String displayUserChoiceOfItem(String itemId) {
+//        io.print("You have selected: " + itemId);
+
     }
     public void displayChangeReturnedToCustomer(BigDecimal moneyDeposited, String chosenItem) {
     }
-
+//
     public void displayFinalMessage() {
     }
 

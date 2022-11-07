@@ -1,6 +1,7 @@
 package VendingMachineController;
 
 import UserInputOutput.VendingMachineView;
+import VendingMachineDao.VendingMachineAuditDaoIF;
 import VendingMachineDao.VendingMachinePersistenceException;
 import VendingMachineService.VendingMachineInsufficientFundsException;
 import VendingMachineService.VendingMachineNoItemInventoryException;
@@ -8,33 +9,29 @@ import VendingMachineService.VendingMachineServiceIF;
 import VendingMachionDto.Item;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.List;
 
 public class VendingMachineController {
     private VendingMachineView view;
-    private VendingMachineServiceIF service;
-    private String item;
+    public VendingMachineServiceIF service;
+    public VendingMachineAuditDaoIF adao;
+    String input;
 
-    Map<String, Item> showListOfItemsToBuy = new HashMap<>();
+    //Map<String, Item> showMapOfItemsToBuy = new HashMap<>();
 
-    public VendingMachineController(VendingMachineView view, VendingMachineServiceIF service) {
+    public VendingMachineController(VendingMachineView view, VendingMachineServiceIF service, VendingMachineAuditDaoIF adao) {
+
         this.view = view;
         this.service = service;
-
-        try {
-            service.loadItemsInStock();
-        } catch (VendingMachinePersistenceException e) {
-            throw new RuntimeException(e);
-        }
+        this.adao = adao;
     }
 
-    public void run() throws VendingMachinePersistenceException {
+    public void run() {
+
         BigDecimal moneyDeposited = new BigDecimal("0");
         boolean keepGoing = true;
         int menuSelection = 0;
-        Scanner scanner = new Scanner(System.in);
+
         try {
             while (keepGoing) {
 
@@ -43,12 +40,13 @@ public class VendingMachineController {
 
                 switch (menuSelection) {
                     case 1:
-                        service.listAllItemsToBuy();
+                        view.promptUserMoneyInput();
+                        moneyDeposited = view.promptUserMoneyInput();
                         break;
 
                     case 2:
-                      moneyDeposited= service.getMoneyFromUser();
-                      break;
+                        viewAndBuyItems();
+                        break;
 
                     case 3:
                         keepGoing = false;
@@ -59,25 +57,55 @@ public class VendingMachineController {
             view.displayFinalMessage();
         } catch (VendingMachinePersistenceException e) {
             view.displayErrorMessage(e.getMessage());
+        } catch (VendingMachineNoItemInventoryException e) {
+            throw new RuntimeException(e);
         }
     }
 
+//    public BigDecimal addFunds(BigDecimal balance) {
+//        view.promptUserMoneyInput();
+//        service.getMoneyFromUser();
+//        Scanner scanner = new Scanner(System.in);
+//        BigDecimal moneyAdded;
+//        moneyAdded = BigDecimal.valueOf(scanner.nextFloat());
+//        return moneyAdded;
+//    }
 
-    public String getChosenItem(String itemId) {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
-            view.promptUserItemChoice();
-            scanner.nextLine();
-            try {
-                String myItem = service.getChosenItem(itemId);
-                view.displayUserChoiceOfItem(item);
+    private BigDecimal viewAndBuyItems() throws VendingMachinePersistenceException, VendingMachineNoItemInventoryException {
+        BigDecimal userFunds = view.promptUserMoneyInput();
+        view.displayUserMoneyInput(userFunds);
 
-            } catch (VendingMachineNoItemInventoryException exception) {
-            }
-        }
+        List<Item> showListOfItemsToBuy = service.listAllItemsToBuy();
+        view.displayItemList(showListOfItemsToBuy);
+        int getChosenItem = view.promptUserItemChoice();
+
+        // String getChosenItem =view.displayUserChoiceOfItem(String.valueOf(showListOfItemsToBuy));
+        Item chosenItem = service.listAllItemsToBuy().get(getChosenItem);
+//        service.updateItemSale("" + getChosenItem);
+//        service.calculateChange(userFunds, chosenItem);
+        adao.writeAuditEntry("purchased item " + chosenItem.getItemName() + " for $" + chosenItem.getItemPrice() + " user funds = " + userFunds);
+
+        return userFunds;
+//        String userItemSelection = view.displayUserChoiceOfItem(input);
+//        Item itemUserSelected = showListOfItemsToBuy.get(userItemSelection);
+
+
     }
 
-   public boolean didUserPutSufficientFundsIn(BigDecimal userAmount, Item item) {
+//        Scanner scanner = new Scanner(System.in);
+//        while (true) {
+//            view.promptUserItemChoice();
+//            scanner.nextLine();
+//            try {
+//                String myItem = service.getChosenItem(itemId);
+//                view.displayUserChoiceOfItem(item);
+//
+//            } catch (VendingMachineNoItemInventoryException exception) {
+//            }
+//        }
+//    }
+
+    public boolean didUserPutSufficientFundsIn(BigDecimal userAmount, Item item) {
         try {
             service.checkSufficientMoneyToBuyItem(userAmount, String.valueOf(item));
             return true;
@@ -105,13 +133,7 @@ public class VendingMachineController {
 //            view.displayErrorMessage(message);
 //        }
 
-    public void updateSoldItem(Item item) throws VendingMachinePersistenceException {
-        try {
-            service.updateItemSale(String.valueOf(item));
-        } catch (VendingMachineNoItemInventoryException ex) {
-            throw new VendingMachinePersistenceException(ex.getMessage());
-        }
-    }
+
 //        void saveItemList () throws VendingMachinePersistenceException {
 //            try {
 //                service.saveItemList();

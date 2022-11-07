@@ -1,6 +1,5 @@
 package VendingMachineDao;
 
-import UserInputOutput.UserInputOutputIF;
 import VendingMachionDto.Item;
 
 import java.io.*;
@@ -9,25 +8,23 @@ import java.util.*;
 
 public class VendingMachineDaoImpl implements VendingMachineDaoIF {
 
-    public final String ITEMS_FILE;
-    public final String DELIMITER = "::";
-
-
-    public VendingMachineDaoImpl(UserInputOutputIF myIo) {
-        ITEMS_FILE = "items.txt";
-    }
-
+    public static final String ITEMS_FILE = "myitems.txt";
+    public static final String DELIMITER = "::";
     private Map<String, Item> mapOfLoadedItems = new HashMap<>();
 
-    @Override
-    public Item addItemAsOwner(String itemId, Item item) {
-        Item itemAdded = mapOfLoadedItems.put(itemId, item);
-        return itemAdded;
-    }
+
+
+
+//    @Override
+//    public Item addItemAsOwner(String itemId, Item item) {
+//        Item itemAdded = mapOfLoadedItems.put(itemId, item);
+//        return itemAdded;
+//    }
 
     @Override
-    public List<Item> getAllItems() {
-        return new ArrayList<Item>(mapOfLoadedItems.values());
+    public List<Item> getAllItems() throws VendingMachinePersistenceException {
+        loadItemsFromFile();
+        return new ArrayList<>(mapOfLoadedItems.values());
     }
 
     @Override
@@ -53,24 +50,27 @@ public class VendingMachineDaoImpl implements VendingMachineDaoIF {
 
     @Override
     public Map<String, Item> loadItemsFromFile() throws VendingMachinePersistenceException {
-        Scanner scanner;
+        Scanner scanner = null;
         try {
-            scanner = new Scanner(
-                    new BufferedReader(new FileReader(ITEMS_FILE)));
+            scanner = new Scanner(new File(ITEMS_FILE));
         } catch (FileNotFoundException e) {
-            throw new VendingMachinePersistenceException("Could not load items in file", e);
+            throw new RuntimeException(e);
         }
+//
         String currentLine;
+        Item currentItem;
         while (scanner.hasNextLine()) {
             currentLine = scanner.nextLine();
             String[] splitInfo = currentLine.split(DELIMITER);
-            String itemId = splitInfo[0];
-            String itemName = splitInfo[1];
-            BigDecimal itemPrice = new BigDecimal(splitInfo[2]);
+            String itemId = splitInfo[0] + DELIMITER;
+            String itemName = splitInfo[1] + DELIMITER;
+            BigDecimal itemPrice = new BigDecimal (splitInfo[2] );
             int itemsInStock = Integer.parseInt(splitInfo[3]);
             Item itemToAdd = new Item(itemId, itemName, itemPrice, itemsInStock);
             mapOfLoadedItems.put(itemToAdd.getItemId(), itemToAdd);
+
         }
+
         scanner.close();
         return mapOfLoadedItems;
     }

@@ -21,8 +21,10 @@ public interface VendingMachineServiceIF {
 
     public void updateItemSale(String item) throws VendingMachineNoItemInventoryException, VendingMachinePersistenceException;
 
-    BigDecimal calculateChange(BigDecimal amount, Item item);
+    public void updateSoldItem(Item item) throws VendingMachinePersistenceException;
 
-    BigDecimal getMoneyFromUser();
+    public BigDecimal calculateChange(BigDecimal amount, Item item);
+
+    public BigDecimal getMoneyFromUser();
 
 }

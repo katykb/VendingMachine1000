@@ -18,9 +18,10 @@ public class VendingMachineServiceImpl implements VendingMachineServiceIF {
     VendingMachineAuditDaoIF adao;
     VendingMachineView view;
 
-    public VendingMachineServiceImpl(VendingMachineDaoIF dao, VendingMachineAuditDaoIF adao) {
+    public VendingMachineServiceImpl(VendingMachineDaoIF dao, VendingMachineAuditDaoIF adao) throws VendingMachinePersistenceException {
         this.dao = dao;
         this.adao = adao;
+        itemsInStockToBuy = loadItemsInStock();
     }
 
 
@@ -99,6 +100,14 @@ public class VendingMachineServiceImpl implements VendingMachineServiceIF {
     public BigDecimal getMoneyFromUser(){
         BigDecimal moneyInput = view.promptUserMoneyInput();
         return moneyInput;
+    }
+    @Override
+    public void updateSoldItem(Item item) throws VendingMachinePersistenceException {
+        try {
+            updateItemSale(String.valueOf(item));
+        } catch (VendingMachineNoItemInventoryException ex) {
+            throw new VendingMachinePersistenceException(ex.getMessage());
+        }
     }
 }
 

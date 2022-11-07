@@ -7,9 +7,9 @@ import java.util.Map;
 
 public interface VendingMachineDaoIF {
 
-    Item addItemAsOwner(String itemId, Item item);
+  //  Item addItemAsOwner(String itemId, Item item);
 
-    List<Item> getAllItems();
+    List<Item> getAllItems() throws VendingMachinePersistenceException;
 
     List<String > getAllItemIds();
 
